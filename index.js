@@ -5,6 +5,7 @@ var noop = function () {}
 var isRelative = require('relative-require-regex')()
 var detect = require('detect-import-require')
 var mapLimit = require('map-limit')
+var resolve = require('resolve')
 
 module.exports = listBrokenRequires
 function listBrokenRequires (cwd, opt, cb) {
@@ -18,8 +19,7 @@ function listBrokenRequires (cwd, opt, cb) {
   var accept = opt.accept || /\.js$/i
   var result = {
     errors: [],
-    paths: [],
-    expressions: [],
+    modules: [],
     broken: {}
   }
 
@@ -41,23 +41,17 @@ function listBrokenRequires (cwd, opt, cb) {
 
   function testModules (file, detected, next) {
     var strings = detected.strings
-    var expressions = detected.expressions
     var dir = path.dirname(file)
 
     // append to our final results list
-    result.paths = result.paths.concat(strings)
-    result.expressions = result.expressions.concat(expressions)
+    result.modules = result.modules.concat(strings)
 
     var relativeImports = strings.filter(function (module) {
       return isRelative.test(module)
     })
 
     mapLimit(relativeImports, 25, function (item, done) {
-      var importPath = path.resolve(dir, item)
-      fs.stat(importPath, function (err, stat) {
-        if (!err && stat.isDirectory()) {
-          err = new Error('required file is a directory')
-        }
+      resolve(item, { basedir: dir }, function (err, res) {
         if (err) {
           if (!(file in result.broken)) {
             result.broken[file] = []
