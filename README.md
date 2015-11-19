@@ -33,6 +33,10 @@ Output:
 Broken requires: 2
 ```
 
+Example:
+
+![image](http://i.imgur.com/EYebaDI.png)
+
 ## Install
 
 ```sh
