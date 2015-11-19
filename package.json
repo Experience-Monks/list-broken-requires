@@ -1,6 +1,6 @@
 {
   "name": "list-broken-requires",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "lists broken require statements in a directory",
   "main": "index.js",
   "license": "MIT",
