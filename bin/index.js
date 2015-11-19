@@ -13,16 +13,18 @@ findBroken(dir, argv, function (result) {
     console.error(color.red('ERROR'), err.message)
   })
 
+  var sum = 0
   var brokenFiles = Object.keys(result.broken)
   brokenFiles.forEach(function (key) {
     console.log(color.bold(path.relative(cwd, key)))
     var brokenRequires = result.broken[key]
     brokenRequires.forEach(function (req) {
+      sum++
       var mod = "'" + escapeStr(req.module) + "'"
       console.log('  ' + color.yellow(mod))
     })
   })
 
-  if (brokenFiles.length > 0) console.log()
-  console.log('Broken requires:', color.bold(brokenFiles.length))
+  if (sum > 0) console.log()
+  console.log('Broken requires:', color.bold(sum))
 })
